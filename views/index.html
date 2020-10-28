@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>[v-cloak] {display: none !important;}</style>
+<link href="../plugin/vue-loading.css" rel="stylesheet"/>
+
+<body>
+    <div id="vueApp" v-cloak class="full-height">
+        <loading 
+            :active.sync="isLoading"
+        >
+        </loading>
+        <h1>測試用頁面</h1>
+        <div style="height: 5vh;">
+            PhoneNumber：
+            <input type="text" v-model.trim="cellPhone" 
+                @focus="isHintShow.cellPhone = true"
+                @blur="isHintShow.cellPhone = false, $v.cellPhone.$touch()">
+            <br>
+            <div v-show="isHintShow.cellPhone" style="color: blue;" >請輸入台灣手機號碼</div>
+            <template v-if="!isHintShow.cellPhone && $v.cellPhone.$error">
+                <div style="color: red;" v-if="!$v.cellPhone.required">手機號碼為必填</div>
+                <div style="color: red;" v-else-if="!$v.cellPhone.isRegExCellPhone">限定輸入台灣手機號碼 EX:0912345678</div>
+            </template>
+        </div>
+
+        <div style="margin-top:3em">
+            <button @click.mousedown="submit">Submit</button>
+        </div>
+    </div>
+</body>
+</html>
+<script src="../plugin//axios.min.js"></script>
+<script src="../plugin/vue-loading-overlay.js"></script>
+
+<script type="module">
+    var regExCellPhone = /^(09[0-9]{8})|(0830[0-9]{6})$/; 
+    import '../plugin/vue-dev.js'
+    import '../plugin/validators.min.js'
+    import '../plugin/vuelidate.min.js'
+
+    //驗證項目
+    var required = validators.required;
+    var maxLength = validators.maxLength;
+    var minLength = validators.minLength;
+    var requiredIf = validators.requiredIf;
+    var between = validators.between
+
+    Vue.use(window.vuelidate.default)
+    Vue.use(VueLoading, {
+        isFullPage: true
+    })
+    Vue.component('loading', VueLoading)
+
+    new Vue({
+        el : "#vueApp",
+        data : {
+            cellPhone : "",
+            isHintShow :{
+                cellPhone : false
+            },
+
+            isLoading : false
+        },
+        validations:{
+            cellPhone:{
+                required,
+                regExCellPhone(v){
+                    return regExCellPhone.test(v) ? true : false
+                }
+            }
+        },
+        methods:{
+            async submit(){
+                this.$v.$reset()
+                this.$v.$touch()
+                if (this.$v.$anyError){ return false }
+                
+                var model = {
+                    cellPhone : this.cellPhone
+                }
+
+                this.isLoading = true
+
+                var res = (await axios.post("/postSMS" , model)).data
+                console.log(res)
+
+                this.isLoading = false
+
+            }
+        },
+
+    })
+
+</script>
+
+<style>
+</style>
