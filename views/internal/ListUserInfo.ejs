@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="vueApp">
+        <h1>{{test}}</h1>
+    </div>
+</body>
+
+</html>
+
+<script src="../plugin//axios.min.js"></script>
+<script src="../plugin/vue-loading-overlay.js"></script>
+
+<script type="module">
+    var regExCellPhone = /^(09[0-9]{8})|(0830[0-9]{6})$/; 
+    import '../plugin/vue-dev.js'
+    import '../plugin/validators.min.js'
+    import '../plugin/vuelidate.min.js'
+
+    //驗證項目
+    var required = validators.required;
+    var maxLength = validators.maxLength;
+    var minLength = validators.minLength;
+    var requiredIf = validators.requiredIf;
+    var between = validators.between
+
+    Vue.use(window.vuelidate.default)
+    Vue.use(VueLoading, {
+        isFullPage: true
+    })
+    Vue.component('loading', VueLoading)
+
+    new Vue({
+        el : "#vueApp",
+        data : {
+            cellPhone : "",
+            isHintShow :{
+                cellPhone : false
+            },
+
+            isLoading : false
+        },
+    })
+</script>
