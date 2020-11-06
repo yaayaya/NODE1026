@@ -109,7 +109,7 @@
             <tbody>
                 <tr v-for="(e,i) in showUserList">
                     <td align="center">
-                        <input type="checkbox" :value="e.phone" v-model="checkedPhone" @click="isAllCheck = false">
+                        <input type="checkbox" :value="e" v-model="checkedPhone" @click="isAllCheck = false">
                     </td>
                     <td>
                         <a href="javascript:void(0)" @click="UpdateDialogShow(e)">{{ e.name }}</a>
@@ -295,7 +295,7 @@
                 console.log(this.showUserList)
                 if (this.isAllCheck) {
                     for (var e in this.showUserList) {
-                        this.checkedPhone.push(this.showUserList[e].phone);
+                        this.checkedPhone.push(this.showUserList[e]);
                     }
                 }
             },
